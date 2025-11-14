@@ -117,7 +117,7 @@
 </head>
 <body>
   <header>
-    <h1>🗓️ لوحة إدارة دوام الجامعة 🎓 (Firebase Realtime)</h1>
+    <h1>🗓️ لوحة إدارة دوام الجامعة 🎓</h1>
     <p>متابعة دوام أيام الأحد، الإثنين، الثلاثاء، والأربعاء — مزامنة فورية</p>
   </header>
 
@@ -239,6 +239,47 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+     // FIX 🟢 الوضع الليلي
+    const darkBtn = document.getElementById("dark-btn");
+    darkBtn.onclick = () => {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    };
+    if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark-mode");
+
+    // FIX 🟢 زر إضافة الدفع لا يعمل → إضافة Listener صحيح
+    document.getElementById("add-payment").addEventListener("click", () => {
+
+      let date = document.getElementById("payment-date").value;
+      let month = document.getElementById("payment-month").value;
+      let amount = document.getElementById("payment-amount").value;
+
+      if (!date || !month || !amount) return alert("أكمل الحقول");
+
+      push(ref(db, "payments"), {
+        date,
+        month,
+        amount,
+        time: Date.now()
+      });
+
+      document.getElementById("payment-amount").value = "";
+    });
+
+    // الاستماع للمدفوعات
+    const paymentBody = document.querySelector("#payment-table tbody");
+    onValue(ref(db, "payments"), (snap) => {
+      paymentBody.innerHTML = "";
+      const data = snap.val() || {};
+
+      Object.values(data).reverse().forEach(p => {
+        const row = paymentBody.insertRow();
+        row.insertCell().textContent = p.month;
+        row.insertCell().textContent = p.date;
+        row.insertCell().textContent = p.amount + " د.ع";
+        row.insertCell().textContent = "✔️ تم الدفع";
+      });
+    });
 
     // ------------- الإعدادات الأساسية ----------------
     const START_DATE = new Date('2025-11-16T00:00:00');
