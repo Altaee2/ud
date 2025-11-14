@@ -123,7 +123,7 @@
 
   <main>
     <div class="toggle-container">
-      <button class="dark-btn" onclick="toggleDarkMode()">🌙dark</button>
+      <button class="dark-mode" onclick="toggleDarkMode()">DARKLL</button>
     </div>
 
     <h2>📊 ملخص الحضور العام</h2>
@@ -481,6 +481,31 @@
       addPaymentToFirebase(newPayment);
       amountInput.value = '';
     }
+     // 💳 إضافة دفع
+    document.getElementById("add-payment").onclick=()=>{
+      let d=document.getElementById("payment-date").value;
+      let m=document.getElementById("payment-month").value;
+      let a=document.getElementById("payment-amount").value;
+      if(!d||!m||!a)return alert("أكمل الحقول");
+      push(ref(db,"payments"),{date:d,month:m,amount:a,time:Date.now()});
+      document.getElementById("payment-amount").value="";
+    }
+
+    // 📡 استماع للمدفوعات
+    onValue(ref(db,"payments"),(snap)=>{
+      const body=document.querySelector('#payment-table tbody');
+      const data=snap.val()||{};
+      body.innerHTML="";
+      Object.values(data).reverse().forEach(p=>{
+        const r=body.insertRow();
+        r.insertCell().textContent=p.month;
+        r.insertCell().textContent=p.date;
+        r.insertCell().textContent=p.amount+" د.ع";
+        r.insertCell().textContent="✔️ تم الدفع";
+      });
+    });
+
+    document.getElementById("payment-date").value=new Date().toISOString().slice(0,10);
 
     // ------------------ تهيئة التشغيل ----------------
     window.onload = function() {
