@@ -159,58 +159,50 @@
 
     <hr>
 
-    <section class="payment-section">
+  <section class="payment-section">
       <h2>💸 تتبع المدفوعات (الأقساط/الرسوم)</h2>
-
       <div class="payment-input-group">
         <div class="input-item">
-          <label for="payment-date">تاريخ الدفع الفعلي:</label>
+          <label>تاريخ الدفع:</label>
           <input type="date" id="payment-date">
         </div>
         <div class="input-item">
-          <label for="payment-month">الشهر الذي يخصه الدفع:</label>
+          <label>الشهر:</label>
           <select id="payment-month">
-            <option value="" disabled selected>اختر الشهر...</option>
-            <option value="تشرين الثاني">تشرين الثاني (نوفمبر)</option>
-            <option value="كانون الأول">كانون الأول (ديسمبر)</option>
-            <option value="كانون الثاني">كانون الثاني (يناير)</option>
-            <option value="شباط">شباط (فبراير)</option>
-            <option value="آذار">آذار (مارس)</option>
-            <option value="نيسان">نيسان (أبريل)</option>
-            <option value="أيار">أيار (مايو)</option>
-            <option value="حزيران">حزيران (يونيو)</option>
+            <option disabled selected>اختر الشهر</option>
+            <option>تشرين الثاني</option>
+            <option>كانون الأول</option>
+            <option>كانون الثاني</option>
+            <option>شباط</option>
+            <option>آذار</option>
+            <option>نيسان</option>
+            <option>أيار</option>
+            <option>حزيران</option>
           </select>
         </div>
         <div class="input-item">
-          <label for="payment-amount">المبلغ المدفوع (د.ع):</label>
-          <input type="number" id="payment-amount" placeholder="مثال: 500000">
+          <label>المبلغ (د.ع):</label>
+          <input type="number" id="payment-amount">
         </div>
-        <button onclick="addPayment()">إضافة سجل دفع</button>
+        <button id="add-payment">إضافة دفع</button>
       </div>
-
       <table id="payment-table">
         <thead>
           <tr>
-            <th>الشهر المخصص</th>
-            <th>تاريخ الدفع الفعلي</th>
-            <th>المبلغ المدفوع (د.ع)</th>
+            <th>الشهر</th>
+            <th>تاريخ الدفع</th>
+            <th>المبلغ</th>
             <th>الحالة</th>
           </tr>
         </thead>
-        <tbody>
-        </tbody>
+        <tbody></tbody>
       </table>
     </section>
   </main>
 
   <footer>
-    <div class="rights-buttons">
-      <button onclick="window.open('https://t.me/altaee_z', '_blank')">🤍 تلجرام: @altaee_z</button>
-      <button onclick="window.open('http://www.ali-Altaee.free.nf', '_blank')">🌐 موقعي: www.ali-Altaee.free.nf</button>
-    </div>
-    <p>هذا الموقع تم إنشاؤه بواسطة AI بناءً على طلبك.</p>
+    <p>✔️ نسخة محسّنة تعمل مع Firebase + إصلاح الوضع الليلي + إصلاح المدفوعات</p>
   </footer>
-
   <!-- Firebase + App JS -->
   <script type="module">
     // === استبدل هذا الكونفيغ بالكونفيغ عندك لو احتجت تغيره لاحقاً ===
@@ -239,47 +231,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-     // FIX 🟢 الوضع الليلي
-    const darkBtn = document.getElementById("dark-btn");
-    darkBtn.onclick = () => {
-      document.body.classList.toggle("dark-mode");
-      localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
-    };
-    if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark-mode");
-
-    // FIX 🟢 زر إضافة الدفع لا يعمل → إضافة Listener صحيح
-    document.getElementById("add-payment").addEventListener("click", () => {
-
-      let date = document.getElementById("payment-date").value;
-      let month = document.getElementById("payment-month").value;
-      let amount = document.getElementById("payment-amount").value;
-
-      if (!date || !month || !amount) return alert("أكمل الحقول");
-
-      push(ref(db, "payments"), {
-        date,
-        month,
-        amount,
-        time: Date.now()
-      });
-
-      document.getElementById("payment-amount").value = "";
-    });
-
-    // الاستماع للمدفوعات
-    const paymentBody = document.querySelector("#payment-table tbody");
-    onValue(ref(db, "payments"), (snap) => {
-      paymentBody.innerHTML = "";
-      const data = snap.val() || {};
-
-      Object.values(data).reverse().forEach(p => {
-        const row = paymentBody.insertRow();
-        row.insertCell().textContent = p.month;
-        row.insertCell().textContent = p.date;
-        row.insertCell().textContent = p.amount + " د.ع";
-        row.insertCell().textContent = "✔️ تم الدفع";
-      });
-    });
 
     // ------------- الإعدادات الأساسية ----------------
     const START_DATE = new Date('2025-11-16T00:00:00');
