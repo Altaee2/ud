@@ -17,17 +17,17 @@
       --shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
     }
     body.dark-mode {
-      --bg-color: #121212;
-      --text-color: #e0e0e0;
-      --card-bg: #1e1e1e;
-      --border-color: #3a3a3a;
-      --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      --bg-color: #0b0d0e;
+      --text-color: #09e95b;
+      --card-bg: #363131;
+      --border-color: #6703e1;
+      --shadow: 0 8px 30px rgba(48, 160, 154, 0.4);
       color: var(--text-color);
     }
-    body.dark-mode header { background-color: #1f1f1f; }
-    body.dark-mode h2 { border-bottom-color: #9287cc; color: #9287cc; }
-    body.dark-mode .stat-card { background-color: #2c2c2c; }
-    body.dark-mode table, body.dark-mode th, body.dark-mode td { border-color: #3a3a3a; }
+    body.dark-mode header { background-color: rgb(14, 14, 12); }
+    body.dark-mode h2 { border-bottom-color: #cf2309; color: #f6f6f6; }
+    body.dark-mode .stat-card { background-color: #030202; }
+    body.dark-mode table, body.dark-mode th, body.dark-mode td { border-color: #0086e5; }
     body.dark-mode tbody tr:nth-child(even) { background-color: #252525; }
     body.dark-mode tbody tr:hover { background-color: #3a3a3a; }
 
@@ -35,7 +35,7 @@
       font-family: 'Arial', sans-serif;
       background-color: var(--bg-color);
       direction: rtl;
-      text-align: right;
+      text-align: center;
       margin: 0;
       padding: 0;
       line-height: 1.6;
@@ -54,7 +54,7 @@
       text-align: center;
       padding: 30px 0;
       background-color: var(--main-color);
-      color: white;
+      color: rgb(251, 249, 249);
       border-radius: 15px 15px 0 0;
       margin: -20px -20px 20px -20px;
     }
@@ -113,6 +113,82 @@
     footer { text-align: center; padding: 15px; margin-top: 20px; font-size: 0.9em; color: var(--secondary-color); }
     .rights-buttons button { background-color: transparent; color: var(--main-dark); border: 1px solid var(--main-dark); padding: 8px 12px; margin: 5px; border-radius: 5px; cursor: pointer; transition: all 0.3s; }
     .rights-buttons button:hover { background-color: var(--main-color); color: white; }
+    
+    .toggle-container {
+  display: flex; /* لمركزة العنصر داخله إذا لزم الأمر */
+  justify-content: center;
+  align-items: center;
+}
+.toggle-btn {
+  /* المظهر الأساسي */
+  background-color: #0c0c0c; /* لون خلفية فاتح افتراضي */
+  color: #fcfbfb; /* لون نص داكن افتراضي */
+  border: none;
+  border-radius: 25px; /* حواف مستديرة */
+  padding: 10px 20px;
+  cursor: pointer;
+  
+  /* الخط والنص */
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: capitalize;
+  
+  /* الانتقالات لتأثيرات بصرية سلسة */
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+  
+  /* الظل (اختياري) */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* عند مرور مؤشر الماوس */
+.toggle-btn:hover {
+  background-color: #ff0808; /* أغمق قليلاً عند المرور */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* عند الضغط على الزر */
+.toggle-btn:active {
+  transform: scale(0.98); /* تأثير ضغطة طفيف */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* عند التركيز (مهم لإمكانية الوصول) */
+.toggle-btn:focus {
+  outline: 2px solid gold; /* تسليط الضوء على التركيز */
+  outline-offset: 2px;
+}
+/* مثال: إذا كان الزر يحمل فئة "dark-mode-active" عندما يكون الوضع الداكن نشطًا */
+.toggle-btn.dark-mode-active {
+  background-color: #333; /* خلفية داكنة */
+  color: #fff; /* نص فاتح */
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2); /* ظل فاتح */
+}
+
+.toggle-btn.dark-mode-active:hover {
+  background-color: #555; /* أفتح قليلاً عند المرور */
+}
+ footer {
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1em;
+            color: var(--secondary-color);
+        }
+        
+        .rights-buttons button {
+            background-color: black;
+            color: gold;
+            border: 1px solid var(--main-dark);
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .rights-buttons button:hover {
+            background-color:gold;
+            color: rgb(0, 0, 0);
+        }
   </style>
 </head>
 <body>
@@ -123,17 +199,17 @@
 
   <main>
    <div class="toggle-container">
-      <button id="dark-btn" class="toggle-btn">🌙 وضع الليل/النهار</button>
+      <button id="dark-btn" class="toggle-btn">🌙 dark mod</button>
     </div>
 
-    <h2>📊 ملخص الحضور العام</h2>
+    <h2>📊 ملخص الحضور</h2>
     <div class="dashboard">
       <div class="stat-card">
-        <h3>دوام الشهر الحالي</h3>
+        <h3>عدد ايام الدوام في الشهر الحالي</h3>
         <p id="monthly-attendance">0 يوم</p>
       </div>
       <div class="stat-card">
-        <h3>دوام السنة الكاملة</h3>
+        <h3>عدد ايام الدوام في السنة الكاملة</h3>
         <p id="yearly-attendance">0 يوم</p>
       </div>
     </div>
@@ -144,11 +220,11 @@
         <table id="attendance-table">
           <thead>
             <tr>
-              <th>التاريخ</th>
-              <th>اليوم</th>
-              <th>الذهاب (صح ✔️)</th>
-              <th>الرجوع (صح ✔️)</th>
-              <th>حالة اليوم</th>
+              <th>التأريخ 🗓️</th>
+              <th>اليوم📌</th>
+              <th>الذهاب 🔼</th>
+              <th>الرجوع 🔽</th>
+              <th>حالة اليوم 💥</th>
             </tr>
           </thead>
           <tbody>
@@ -160,31 +236,35 @@
     <hr>
 
   <section class="payment-section">
-      <h2>💸 تتبع المدفوعات (الأقساط/الرسوم)</h2>
+      <h2>💸 الدفع الشهري </h2>
       <div class="payment-input-group">
         <div class="input-item">
           <label>تاريخ الدفع:</label>
           <input type="date" id="payment-date">
         </div>
         <div class="input-item">
-          <label>الشهر:</label>
+          <label>للشهر:</label>
           <select id="payment-month">
             <option disabled selected>اختر الشهر</option>
-            <option>تشرين الثاني</option>
-            <option>كانون الأول</option>
-            <option>كانون الثاني</option>
-            <option>شباط</option>
-            <option>آذار</option>
-            <option>نيسان</option>
-            <option>أيار</option>
-            <option>حزيران</option>
+            <option>1 كانون الثاني - رمضان - يناير </option>
+            <option>2 شباط - شوال - فبراير </option>
+            <option>3 آذار - ذي القعدة - مارس </option>
+            <option>4 نيسان - ذي الحجة - ابريل </option>
+            <option>5 آيار - محرم - مايو </option>
+            <option>6 حزيران - صفر - يونيو </option>
+            <option>7 تموز - ربيع الاول - يوليو</option>
+            <option>8 آب - ربيع الثاني - اغسطس</option>
+            <option>9 آيلول - جمادي الاولى - سبتمبر</option>
+            <option>10 تشرين الاول - جمادي الاخرى - اكتوبر</option>
+            <option>11 تشرين الثاني - رجب - نوفمبر</option>
+            <option>12 كانون الاول - شعبان - ديسمبر</option>
           </select>
         </div>
         <div class="input-item">
-          <label>المبلغ (د.ع):</label>
+          <label>المبلغ :</label>
           <input type="number" id="payment-amount">
         </div>
-        <button id="add-payment">إضافة دفع</button>
+        <button id="add-payment">إضافة دفعة</button>
       </div>
       <table id="payment-table">
         <thead>
@@ -200,9 +280,15 @@
     </section>
   </main>
 
-  <footer>
-    <p>✔️ نسخة محسّنة تعمل مع Firebase + إصلاح الوضع الليلي + إصلاح المدفوعات</p>
-  </footer>
+   <footer>
+        <div class="rights-buttons">
+            <button onclick="window.open('https://t.me/altaee_z', '_blank')">🤍 تلجرام: @altaee_z</button>
+            <button onclick="window.open('http://www.ali-Altaee.free.nf', '_blank')">🌐 موقعي: www.ali-Altaee.free.nf</button>
+        </div>
+            <p>جميع الحقوق المحفوظة الى علي الطائي || لذا يمنع التلاعب بالبيانات بعدم تعرضك للخطر مني 👤</p>
+
+    </footer>
+
   <!-- Firebase + App JS -->
   <script type="module">
     // === استبدل هذا الكونفيغ بالكونفيغ عندك لو احتجت تغيره لاحقاً ===
