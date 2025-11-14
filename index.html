@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>إدارة دوام الجامعة - متقدم (Firebase Realtime)</title>
+  <title>إدارة دوام الجامعة - متقدم </title>
   <style>
     /* (نفس الـCSS من ملفك السابق) */
     :root {
@@ -122,8 +122,8 @@
   </header>
 
   <main>
-    <div class="toggle-container">
-      <button class="dark-mode" onclick="toggleDarkMode()">DARKLL</button>
+   <div class="toggle-container">
+      <button id="dark-btn" class="toggle-btn">🌙 وضع الليل/النهار</button>
     </div>
 
     <h2>📊 ملخص الحضور العام</h2>
@@ -519,12 +519,13 @@
       listenToAttendanceRealtime();
       listenToPaymentsRealtime();
     }
-    const darkBtn = document.getElementById("dark-btn");
-    darkBtn.onclick = () => {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+       // 🌙 الوضع الليلي
+    document.getElementById("dark-btn").onclick=()=>{
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("darkMode",document.body.classList.contains("dark-mode"));
     };
-    if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark-mode");
+    if(localStorage.getItem("darkMode")==="true")document.body.classList.add("dark-mode");
+
   </script>
 </body>
 </html>
