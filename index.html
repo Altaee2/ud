@@ -1,384 +1,508 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>إدارة دوام الجامعة - متقدم (Firebase Realtime)</title>
-    <style>
-        /* CSS كامل */
-        
-         :root {
-            --main-color: #5b50a3;
-            --main-dark: #3a3266;
-            --secondary-color: #6c757d;
-            --bg-color: #f0f2f5;
-            --text-color: #333;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        body.dark-mode {
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --card-bg: #1e1e1e;
-            --border-color: #3a3a3a;
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-            color: var(--text-color);
-        }
-        
-        body.dark-mode header {
-            background-color: #1f1f1f;
-        }
-        
-        body.dark-mode h2 {
-            border-bottom-color: #9287cc;
-            color: #9287cc;
-        }
-        
-        body.dark-mode .stat-card {
-            background-color: #2c2c2c;
-        }
-        
-        body.dark-mode table,
-        body.dark-mode th,
-        body.dark-mode td {
-            border-color: #3a3a3a;
-        }
-        
-        body.dark-mode tbody tr:nth-child(even) {
-            background-color: #252525;
-        }
-        
-        body.dark-mode tbody tr:hover {
-            background-color: #3a3a3a;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--bg-color);
-            direction: rtl;
-            text-align: right;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-        main {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-        
-        header {
-            text-align: center;
-            padding: 30px 0;
-            background-color: var(--main-color);
-            color: white;
-            border-radius: 15px 15px 0 0;
-            margin: -20px -20px 20px -20px;
-        }
-        
-        h2 {
-            color: var(--main-dark);
-            border-bottom: 3px solid var(--main-color);
-            display: inline-block;
-            padding-bottom: 5px;
-            margin-top: 30px;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            transition: color 0.3s, border-bottom-color 0.3s;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-            justify-content: center;
-        }
-        
-        .stat-card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        
-        .stat-card h3 {
-            color: var(--main-color);
-            margin-top: 0;
-        }
-        
-        .stat-card p {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        
-        th,
-        td {
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-        }
-        
-        thead th {
-            background-color: var(--main-color);
-            color: white;
-            font-weight: bold;
-        }
-        
-        tbody tr:nth-child(even) {
-            background-color: var(--bg-color);
-        }
-        
-        tbody tr:hover {
-            background-color: #ebe7ff;
-        }
-        
-        input[type="checkbox"] {
-            transform: scale(1.3);
-            cursor: pointer;
-            accent-color: #28a745;
-        }
-        
-        .locked-checkbox {
-            opacity: 0.5;
-            cursor: not-allowed !important;
-            background-color: #f7f7f7 !important;
-        }
-        
-        body.dark-mode .locked-checkbox {
-            background-color: #2c2c2c !important;
-        }
-        
-        .status-completed {
-            color: #28a745;
-            font-weight: bold;
-        }
-        
-        .status-partial {
-            color: #ffc107;
-            font-weight: bold;
-        }
-        
-        .status-absent {
-            color: #dc3545;
-            font-weight: bold;
-        }
-        
-        .payment-section th {
-            background-color: var(--secondary-color);
-        }
-        
-        .paid-row {
-            background-color: #d4edda !important;
-        }
-        
-        .payment-input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-        }
-        
-        .payment-input-group input,
-        .payment-input-group select,
-        .payment-input-group button {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-            background-color: var(--card-bg);
-            color: var(--text-color);
-        }
-        
-        .payment-input-group button {
-            background-color: var(--main-color);
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .payment-input-group button:hover {
-            background-color: var(--main-dark);
-        }
-        
-        .input-item {
-            flex: 1 1 180px;
-        }
-        
-        .input-item label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        .toggle-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .toggle-btn {
-            padding: 10px 15px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .toggle-btn:hover {
-            background-color: #5a6268;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: var(--secondary-color);
-        }
-        
-        .rights-buttons button {
-            background-color: transparent;
-            color: var(--main-dark);
-            border: 1px solid var(--main-dark);
-            padding: 8px 12px;
-            margin: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .rights-buttons button:hover {
-            background-color: var(--main-color);
-            color: white;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>إدارة دوام الجامعة - متقدم (Firebase Realtime)</title>
+  <style>
+    /* (نفس الـCSS من ملفك السابق) */
+    :root {
+      --main-color: #5b50a3;
+      --main-dark: #3a3266;
+      --secondary-color: #6c757d;
+      --bg-color: #f0f2f5;
+      --text-color: #333;
+      --card-bg: #ffffff;
+      --border-color: #e0e0e0;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+    body.dark-mode {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --card-bg: #1e1e1e;
+      --border-color: #3a3a3a;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      color: var(--text-color);
+    }
+    body.dark-mode header { background-color: #1f1f1f; }
+    body.dark-mode h2 { border-bottom-color: #9287cc; color: #9287cc; }
+    body.dark-mode .stat-card { background-color: #2c2c2c; }
+    body.dark-mode table, body.dark-mode th, body.dark-mode td { border-color: #3a3a3a; }
+    body.dark-mode tbody tr:nth-child(even) { background-color: #252525; }
+    body.dark-mode tbody tr:hover { background-color: #3a3a3a; }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: var(--bg-color);
+      direction: rtl;
+      text-align: right;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    header {
+      text-align: center;
+      padding: 30px 0;
+      background-color: var(--main-color);
+      color: white;
+      border-radius: 15px 15px 0 0;
+      margin: -20px -20px 20px -20px;
+    }
+    h2 {
+      color: var(--main-dark);
+      border-bottom: 3px solid var(--main-color);
+      display: inline-block;
+      padding-bottom: 5px;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      transition: color 0.3s, border-bottom-color 0.3s;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+    .stat-card {
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    .stat-card h3 { color: var(--main-color); margin-top: 0; }
+    .stat-card p { font-size: 2.5em; font-weight: bold; color: var(--text-color); }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 12px 15px; border: 1px solid var(--border-color); text-align: center; }
+    thead th { background-color: var(--main-color); color: white; font-weight: bold; }
+    tbody tr:nth-child(even) { background-color: var(--bg-color); }
+    tbody tr:hover { background-color: #ebe7ff; }
+    input[type="checkbox"] { transform: scale(1.3); cursor: pointer; accent-color: #28a745; }
+    .locked-checkbox { opacity: 0.5; cursor: not-allowed !important; background-color: #f7f7f7 !important; }
+    body.dark-mode .locked-checkbox { background-color: #2c2c2c !important; }
+    .status-completed { color: #28a745; font-weight: bold; }
+    .status-partial { color: #ffc107; font-weight: bold; }
+    .status-absent { color: #dc3545; font-weight: bold; }
+    .payment-section th { background-color: var(--secondary-color); }
+    .paid-row { background-color: #d4edda !important; }
+    .payment-input-group { display: flex; gap: 10px; margin-bottom: 20px; align-items: flex-end; flex-wrap: wrap; }
+    .payment-input-group input, .payment-input-group select, .payment-input-group button {
+      padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; background-color: var(--card-bg); color: var(--text-color);
+    }
+    .payment-input-group button { background-color: var(--main-color); color: white; cursor: pointer; transition: background-color 0.3s; }
+    .payment-input-group button:hover { background-color: var(--main-dark); }
+    .input-item { flex: 1 1 180px; }
+    .input-item label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .toggle-container { text-align: center; margin-bottom: 20px; }
+    .toggle-btn { padding: 10px 15px; background-color: var(--secondary-color); color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+    .toggle-btn:hover { background-color: #5a6268; }
+    footer { text-align: center; padding: 15px; margin-top: 20px; font-size: 0.9em; color: var(--secondary-color); }
+    .rights-buttons button { background-color: transparent; color: var(--main-dark); border: 1px solid var(--main-dark); padding: 8px 12px; margin: 5px; border-radius: 5px; cursor: pointer; transition: all 0.3s; }
+    .rights-buttons button:hover { background-color: var(--main-color); color: white; }
+  </style>
 </head>
-
 <body>
-    <header>
-        <h1>🗓️ لوحة إدارة دوام الجامعة 🎓 (Firebase Realtime)</h1>
-        <p>متابعة دوام أيام الأحد، الإثنين، الثلاثاء، والأربعاء — مزامنة فورية</p>
-    </header>
+  <header>
+    <h1>🗓️ لوحة إدارة دوام الجامعة 🎓 (Firebase Realtime)</h1>
+    <p>متابعة دوام أيام الأحد، الإثنين، الثلاثاء، والأربعاء — مزامنة فورية</p>
+  </header>
 
-    <main>
-        <div class="toggle-container">
-            <button id="dark-btn" class="toggle-btn">🌙 وضع الليل/النهار</button>
+  <main>
+    <div class="toggle-container">
+      <button class="toggle-btn" onclick="toggleDarkMode()">🌙 وضع الليل/النهار</button>
+    </div>
+
+    <h2>📊 ملخص الحضور العام</h2>
+    <div class="dashboard">
+      <div class="stat-card">
+        <h3>دوام الشهر الحالي</h3>
+        <p id="monthly-attendance">0 يوم</p>
+      </div>
+      <div class="stat-card">
+        <h3>دوام السنة الكاملة</h3>
+        <p id="yearly-attendance">0 يوم</p>
+      </div>
+    </div>
+
+    <section class="attendance-section">
+      <h2>سجل الحضور اليومي</h2>
+      <div class="table-container">
+        <table id="attendance-table">
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>اليوم</th>
+              <th>الذهاب (صح ✔️)</th>
+              <th>الرجوع (صح ✔️)</th>
+              <th>حالة اليوم</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="payment-section">
+      <h2>💸 تتبع المدفوعات (الأقساط/الرسوم)</h2>
+
+      <div class="payment-input-group">
+        <div class="input-item">
+          <label for="payment-date">تاريخ الدفع الفعلي:</label>
+          <input type="date" id="payment-date">
         </div>
-
-        <h2>📊 ملخص الحضور العام</h2>
-        <div class="dashboard">
-            <div class="stat-card">
-                <h3>دوام الشهر الحالي</h3>
-                <p id="monthly-attendance">0 يوم</p>
-            </div>
-            <div class="stat-card">
-                <h3>دوام السنة الكاملة</h3>
-                <p id="yearly-attendance">0 يوم</p>
-            </div>
-        </div>
-
-        <section class="attendance-section">
-            <h2>سجل الحضور اليومي</h2>
-            <table id="attendance-table">
-                <thead>
-                    <tr>
-                        <th>التاريخ</th>
-                        <th>اليوم</th>
-                        <th>الذهاب ✔️</th>
-                        <th>الرجوع ✔️</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
-
-        <hr>
-
-        <section class="payment-section">
-            <h2>💸 تتبع المدفوعات</h2>
-            <div class="payment-input-group">
-                <div class="input-item">
-                    <label>تاريخ الدفع:</label>
-                    <input type="date" id="payment-date">
-                </div>
-                <div class="input-item">
-                    <label>الشهر:</label>
-                    <select id="payment-month">
-            <option disabled selected>اختر الشهر</option>
-            <option>تشرين الثاني</option>
-            <option>كانون الأول</option>
-            <option>كانون الثاني</option>
-            <option>شباط</option>
-            <option>آذار</option>
-            <option>نيسان</option>
-            <option>أيار</option>
-            <option>حزيران</option>
+        <div class="input-item">
+          <label for="payment-month">الشهر الذي يخصه الدفع:</label>
+          <select id="payment-month">
+            <option value="" disabled selected>اختر الشهر...</option>
+            <option value="تشرين الثاني">تشرين الثاني (نوفمبر)</option>
+            <option value="كانون الأول">كانون الأول (ديسمبر)</option>
+            <option value="كانون الثاني">كانون الثاني (يناير)</option>
+            <option value="شباط">شباط (فبراير)</option>
+            <option value="آذار">آذار (مارس)</option>
+            <option value="نيسان">نيسان (أبريل)</option>
+            <option value="أيار">أيار (مايو)</option>
+            <option value="حزيران">حزيران (يونيو)</option>
           </select>
-                </div>
-                <div class="input-item">
-                    <label>المبلغ:</label>
-                    <input type="number" id="payment-amount">
-                </div>
-                <button id="add-payment">إضافة دفع</button>
-            </div>
+        </div>
+        <div class="input-item">
+          <label for="payment-amount">المبلغ المدفوع (د.ع):</label>
+          <input type="number" id="payment-amount" placeholder="مثال: 500000">
+        </div>
+        <button onclick="addPayment()">إضافة سجل دفع</button>
+      </div>
 
-            <table id="payment-table">
-                <thead>
-                    <tr>
-                        <th>الشهر</th>
-                        <th>التاريخ</th>
-                        <th>المبلغ</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
-    </main>
+      <table id="payment-table">
+        <thead>
+          <tr>
+            <th>الشهر المخصص</th>
+            <th>تاريخ الدفع الفعلي</th>
+            <th>المبلغ المدفوع (د.ع)</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+  </main>
 
-    <footer>
-        <p>✔️ نسخة كاملة محدثة مع Firebase Realtime Database</p>
-    </footer>
+  <footer>
+    <div class="rights-buttons">
+      <button onclick="window.open('https://t.me/altaee_z', '_blank')">🤍 تلجرام: @altaee_z</button>
+      <button onclick="window.open('http://www.ali-Altaee.free.nf', '_blank')">🌐 موقعي: www.ali-Altaee.free.nf</button>
+    </div>
+    <p>هذا الموقع تم إنشاؤه بواسطة AI بناءً على طلبك.</p>
+  </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js"; import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js"; const app = initializeApp({ apiKey: "AIzaSyCFt-2b4p-ZNipxdREf3QsNIpovDbhwnHw",
-        authDomain: "ali22-603de.firebaseapp.com", projectId: "ali22-603de", storageBucket: "ali22-603de.firebasestorage.app", messagingSenderId: "890888190886", appId: "1:890888190886:web:1cb51381769a0a20752d67", measurementId: "G-T3BYJVDD4N" }); const
-        db = getDatabase(app); document.getElementById("dark-btn").onclick = () => { document.body.classList.toggle("dark-mode"); localStorage.setItem("darkMode", document.body.classList.contains("dark-mode")); }; if (localStorage.getItem("darkMode")
-        === "true") document.body.classList.add("dark-mode"); const START = new Date("2025-11-16"); const END = new Date("2026-11-16"); const DAYS = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]; function createTable(){ const body=document.querySelector('#attendance-table
-        tbody'); let d=new Date(START); body.innerHTML=""; while(d
-        <END){ if([0,1,2,3].includes(d.getDay())){ const key=d.toISOString().slice(0,10); const row=body.insertRow(); row.id="day-" +key; row.insertCell().textContent=key.replace(/-/g, '/'); row.insertCell().textContent=DAYS[d.getDay()]; row.insertCell().innerHTML=`<input
-            type='checkbox' data-type='in' onchange="mark('${key}')">`; row.insertCell().innerHTML=`
-            <input type='checkbox' data-type='out' onchange="mark('${key}')">`; row.insertCell().className='status-cell'; } d.setDate(d.getDate()+1); } } window.mark=function(key){ const row=document.getElementById("day-"+key); const i=row.querySelector('[data-type="in"]').checked;
-            const o=row.querySelector('[data-type="out"]').checked; set(ref(db,"attendance/"+key),{in:i,out:o,time:Date.now()}); } onValue(ref(db,"attendance"),(snap)=>{ const data=snap.val()||{}; document.querySelectorAll('#attendance-table tbody tr').forEach(row=>{
-            const key=row.id.replace('day-',''); const rec=data[key]||{}; row.querySelector('[data-type="in"]').checked=!!rec.in; row.querySelector('[data-type="out"]').checked=!!rec.out; const st=row.querySelector('.status-cell'); if(rec.in && rec.out){st.textContent='✔️
-            مكتمل';} else if(rec.in||rec.out){st.textContent='⚠️ نصف دوام';} else{st.textContent='❌ غياب';} }); }); document.getElementById("add-payment").onclick=()=>{ let d=document.getElementById("payment-date").value; let m=document.getElementById("payment-month").value;
-            let a=document.getElementById("payment-amount").value; if(!d||!m||!a)return alert("أكمل الحقول"); push(ref(db,"payments"),{date:d,month:m,amount:a,time:Date.now()}); document.getElementById("payment-amount").value=""; } onValue(ref(db,"payments"),(snap)=>{
-            const body=document.querySelector('#payment-table tbody'); const data=snap.val()||{}; body.innerHTML=""; Object.values(data).reverse().forEach(p=>{ const r=body.insertRow(); r.insertCell().textContent=p.month; r.insertCell().textContent=p.date;
-            r.insertCell().textContent=p.amount+" د.ع"; r.insertCell().textContent="✔️ تم الدفع"; }); }); createTable(); document.getElementById("payment-date").value=new Date().toISOString().slice(0,10);
-    </script>
+  <!-- Firebase + App JS -->
+  <script type="module">
+    // === استبدل هذا الكونفيغ بالكونفيغ عندك لو احتجت تغيره لاحقاً ===
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      set,
+      push,
+      onValue,
+      update,
+      remove,
+      child,
+      get
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFt-2b4p-ZNipxdREf3QsNIpovDbhwnHw",
+      authDomain: "ali22-603de.firebaseapp.com",
+      projectId: "ali22-603de",
+      storageBucket: "ali22-603de.firebasestorage.app",
+      messagingSenderId: "890888190886",
+      appId: "1:890888190886:web:1cb51381769a0a20752d67",
+      measurementId: "G-T3BYJVDD4N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ------------- الإعدادات الأساسية ----------------
+    const START_DATE = new Date('2025-11-16T00:00:00');
+    const END_DATE = new Date(START_DATE);
+    END_DATE.setFullYear(START_DATE.getFullYear() + 1);
+
+    const WEEK_DAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const WORK_DAYS_INDICES = [0, 1, 2, 3]; // الأحد-الأربعاء
+
+    const attendanceBody = document.querySelector('#attendance-table tbody');
+    const paymentBody = document.querySelector('#payment-table tbody');
+
+    let attendanceCache = {}; // سيحتوي على نسخة من قاعدة الحضور
+    let paymentsCache = [];   // نسخة من المدفوعات
+
+    // ------------------ الثيم -----------------------
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+      // إعادة تحميل الواجهة (مش ضروري لكن نحتفظ عليها)
+    }
+    function applySavedTheme() {
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+    }
+
+    // ------------------ تواريخ وتنسيق ----------------
+    function formatDateForDisplay(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      // نعرض بصيغة YYYY/MM/DD
+      return `${y}/${m}/${d}`;
+    }
+    function formatDateForKey(date) {
+      // مفتاح صالح للـ Firebase (لا يحتوي '/')
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`; // YYYY-MM-DD
+    }
+
+    // ------------------ إنشاء جدول الحضور ----------------
+    function createAttendanceTable() {
+      let currentDate = new Date(START_DATE);
+      attendanceBody.innerHTML = '';
+
+      while (currentDate < END_DATE) {
+        const dayIndex = currentDate.getDay();
+
+        if (WORK_DAYS_INDICES.includes(dayIndex)) {
+          const dateDisplay = formatDateForDisplay(currentDate);
+          const dateKey = formatDateForKey(currentDate); // مفتاح بدون '/'
+          const dayName = WEEK_DAYS[dayIndex];
+
+          const row = attendanceBody.insertRow();
+          row.id = `day-${dateKey}`; // ex: day-2025-11-16
+
+          row.insertCell().textContent = dateDisplay;
+          row.insertCell().textContent = dayName;
+
+          const inCell = row.insertCell();
+          const outCell = row.insertCell();
+
+          // نستخدم dataset لتخزين المفتاح
+          inCell.innerHTML = `<input type="checkbox" data-date="${dateKey}" data-type="in" class="check-in-out" onchange="handleAttendanceChange('${dateKey}')">`;
+          outCell.innerHTML = `<input type="checkbox" data-date="${dateKey}" data-type="out" class="check-in-out" onchange="handleAttendanceChange('${dateKey}')">`;
+
+          row.insertCell().className = 'status-cell';
+        }
+
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+
+    // ------------------ حفظ وقراءة من Firebase ----------------
+    function saveAttendanceToFirebase(dateKey, data) {
+      // data = { in: true/false, out: true/false, timestamp: ... }
+      set(ref(db, `attendance/${dateKey}`), data)
+        .catch(err => console.error('Firebase save attendance error:', err));
+    }
+
+    function addPaymentToFirebase(paymentObject) {
+      // دفع جديد -> نستخدم push
+      push(ref(db, 'payments'), paymentObject)
+        .catch(err => console.error('Firebase add payment error:', err));
+    }
+
+    // ------------------ التعامل مع التغييرات من الواجهة ----------------
+    // نحتاج الدالة أن تكون متاحة عالمياً لأننا نستدعيها من onchange في HTML string
+    window.handleAttendanceChange = function(dateKey) {
+      const row = document.getElementById(`day-${dateKey}`);
+      if (!row) return;
+
+      const checkIn = row.querySelector('[data-type="in"]').checked;
+      const checkOut = row.querySelector('[data-type="out"]').checked;
+
+      const payload = {
+        in: !!checkIn,
+        out: !!checkOut,
+        updatedAt: Date.now()
+      };
+
+      // نحفظ للمسار attendance/dateKey
+      saveAttendanceToFirebase(dateKey, payload);
+      // ستقوم الـ listener بتحديث الواجهة فوراً عند الكتابة الناجحة (onValue)
+    }
+
+    // ------------------ تحديث واجهة اليوم ----------------
+    function updateDayStatus(row, checkIn, checkOut) {
+      const statusCell = row.querySelector('.status-cell');
+      statusCell.className = 'status-cell';
+
+      if (checkIn && checkOut) {
+        statusCell.textContent = '✔️ دوام مكتمل';
+        statusCell.classList.add('status-completed');
+      } else if (checkIn || checkOut) {
+        statusCell.textContent = '⚠️ نصف دوام';
+        statusCell.classList.add('status-partial');
+      } else {
+        statusCell.textContent = '❌ غياب';
+        statusCell.classList.add('status-absent');
+      }
+    }
+
+    // ------------------ الإحصائيات ----------------
+    function updateStatisticsFromCache() {
+      let yearlyCompleted = 0;
+      let monthlyCompleted = 0;
+      const today = new Date();
+      const currentMonth = today.getMonth();
+
+      for (const dateKey in attendanceCache) {
+        const rec = attendanceCache[dateKey];
+        if (rec && rec.in && rec.out) {
+          yearlyCompleted++;
+          // تحويل dateKey (YYYY-MM-DD) إلى كائن تاريخ
+          const parts = dateKey.split('-').map(Number);
+          const d = new Date(parts[0], parts[1]-1, parts[2]);
+          if (d.getMonth() === currentMonth && d.getFullYear() === today.getFullYear()) {
+            monthlyCompleted++;
+          }
+        }
+      }
+
+      document.getElementById('monthly-attendance').textContent = `${monthlyCompleted} أيام`;
+      document.getElementById('yearly-attendance').textContent = `${yearlyCompleted} أيام`;
+    }
+
+    // ------------------ عرض المدفوعات ----------------
+    function renderPaymentsFromCache() {
+      paymentBody.innerHTML = '';
+
+      if (!paymentsCache || paymentsCache.length === 0) {
+        const row = paymentBody.insertRow();
+        row.insertCell().colSpan = 4;
+        row.cells[0].textContent = 'لا توجد سجلات دفع حتى الآن.';
+        row.cells[0].style.textAlign = 'center';
+        return;
+      }
+
+      paymentsCache.slice().reverse().forEach(payment => {
+        const row = paymentBody.insertRow();
+        row.classList.add('paid-row');
+
+        row.insertCell().textContent = payment.month || '';
+        row.insertCell().textContent = payment.date || '';
+        row.insertCell().textContent = `${payment.amount} د.ع`;
+        row.insertCell().textContent = '✅ تم الدفع';
+      });
+    }
+
+    // ------------------ Listeners من Firebase (مزامنة فورية) ----------------
+    function listenToAttendanceRealtime() {
+      const attendanceRef = ref(db, 'attendance/');
+      onValue(attendanceRef, (snapshot) => {
+        const val = snapshot.val() || {};
+        attendanceCache = val;
+        // عدل الواجهة بحسب الكاش
+        // لكل صف في الجدول، حدّث checkboxes والحالة والقفل
+        document.querySelectorAll('#attendance-table tbody tr').forEach(row => {
+          const id = row.id; // day-YYYY-MM-DD
+          const dateKey = id.replace('day-', '');
+          const dayData = attendanceCache[dateKey] || {};
+          const checkInEl = row.querySelector('[data-type="in"]');
+          const checkOutEl = row.querySelector('[data-type="out"]');
+
+          if (checkInEl) checkInEl.checked = !!dayData.in;
+          if (checkOutEl) checkOutEl.checked = !!dayData.out;
+
+          // قفل الخانات إذا اليوم مرّ من تاريخه (محلياً)
+          const parts = dateKey.split('-').map(Number);
+          const recordDate = new Date(parts[0], parts[1]-1, parts[2]);
+          recordDate.setHours(23,59,59,999);
+          const today = new Date();
+          const isLockedByDate = recordDate < today;
+
+          row.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            if (isLockedByDate) {
+              checkbox.disabled = true;
+              checkbox.classList.add('locked-checkbox');
+            } else {
+              checkbox.disabled = false;
+              checkbox.classList.remove('locked-checkbox');
+            }
+          });
+
+          updateDayStatus(row, !!dayData.in, !!dayData.out);
+        });
+
+        updateStatisticsFromCache();
+      });
+    }
+
+    function listenToPaymentsRealtime() {
+      const paymentsRef = ref(db, 'payments/');
+      onValue(paymentsRef, (snapshot) => {
+        const val = snapshot.val() || {};
+        // val عبارة عن كائن له مفاتيح عشوائية -> نحولها لمصفوفة
+        paymentsCache = Object.keys(val).map(k => val[k]);
+        renderPaymentsFromCache();
+      });
+    }
+
+    // ------------------ إضافة دفعة جديدة (واجهة المستخدم) ----------------
+    function addPayment() {
+      const dateInput = document.getElementById('payment-date');
+      const monthInput = document.getElementById('payment-month');
+      const amountInput = document.getElementById('payment-amount');
+
+      const date = dateInput.value;
+      const month = monthInput.value;
+      const amount = amountInput.value.trim();
+
+      if (!date || !month || !amount || isNaN(amount) || amount <= 0) {
+        alert('الرجاء إدخال تاريخ دفع، الشهر المخصص، ومبلغ دفع صحيح.');
+        return;
+      }
+
+      const newPayment = {
+        date: date,
+        month: month,
+        amount: new Intl.NumberFormat('ar-IQ').format(amount),
+        timestamp: Date.now()
+      };
+
+      addPaymentToFirebase(newPayment);
+      amountInput.value = '';
+    }
+
+    // ------------------ تهيئة التشغيل ----------------
+    window.onload = function() {
+      applySavedTheme();
+      createAttendanceTable();
+
+      // set default date for date input (input[type=date] يحتاج YYYY-MM-DD)
+      document.getElementById('payment-date').value = new Date().toISOString().slice(0,10);
+
+      // بداية الاستماع للمسارات في Firebase (مزامنة فورية)
+      listenToAttendanceRealtime();
+      listenToPaymentsRealtime();
+    }
+  </script>
 </body>
-
 </html>
